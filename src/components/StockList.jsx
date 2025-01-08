@@ -125,17 +125,17 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-              {stocks
+           {stocks
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((stock) => {
-                    const currentPrice = stock.currentPrice || stock.buyPrice || 0;
-                    const buyPrice = stock.buyPrice || 0;
-                    const quantity = stock.quantity || 0;
-                    
-                    const currentValue = quantity * currentPrice;
-                    const initialValue = quantity * buyPrice;
-                    const profit = currentValue - initialValue;
-                    const profitPercentage = calculateProfitPercentage(initialValue, currentValue);
+                const currentPrice = stock.currentPrice || stock.buyPrice || 0;
+                const buyPrice = stock.buyPrice || 0;
+                const quantity = stock.quantity || 0;
+                
+                const currentValue = quantity * currentPrice;
+                const initialValue = quantity * buyPrice;
+                const profit = currentValue - initialValue;
+                const profitPercentage = calculateProfitPercentage(initialValue, currentValue);
 
                 return (
                   <TableRow
@@ -143,23 +143,23 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                     sx={{
                       transition: 'background-color 0.3s',
                       '&:hover': {
-                          backgroundColor: isDarkMode 
-                            ? 'rgba(255, 255, 255, 0.05)' 
-                            : 'rgba(0, 0, 0, 0.04)',
+                        backgroundColor: isDarkMode 
+                          ? 'rgba(255, 255, 255, 0.05)' 
+                          : 'rgba(0, 0, 0, 0.04)',
                       },
                     }}
                   >
-                        <TableCell>
-                        <Typography variant="body2" sx={{ 
-                          fontWeight: 500,
-                          color: theme.palette.text.primary 
-                        }}>
-                            {stock.name || 'N/A'}
-                          </Typography>
-                        </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ 
+                        fontWeight: 500,
+                        color: theme.palette.text.primary 
+                      }}>
+                        {stock.name || 'N/A'}
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Chip
-                            label={stock.ticker || 'N/A'}
+                        label={stock.ticker || 'N/A'}
                         size="small"
                         sx={{
                           fontWeight: 'bold',
@@ -168,46 +168,46 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                         }}
                       />
                     </TableCell>
-                      <TableCell align="right" sx={{ color: theme.palette.text.primary }}>
-                        {quantity}
-                      </TableCell>
-                        <TableCell align="right">
-                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
-                            {formatCurrency(buyPrice)}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
-                            {formatCurrency(currentPrice)}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                        <Typography variant="body2" sx={{ 
-                          fontWeight: 500,
-                          color: theme.palette.text.primary 
-                        }}>
-                            {formatCurrency(currentValue)}
-                          </Typography>
-                        </TableCell>
+                    <TableCell align="right" sx={{ color: theme.palette.text.primary }}>
+                      {quantity}
+                    </TableCell>
                     <TableCell align="right">
-                        <Box sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'flex-end',
-                          gap: 1,
-                        }}>
-                            {profitPercentage >= 0 ? (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                        {formatCurrency(buyPrice)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                        {formatCurrency(currentPrice)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2" sx={{ 
+                        fontWeight: 500,
+                        color: theme.palette.text.primary 
+                      }}>
+                        {formatCurrency(currentValue)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        gap: 1,
+                      }}>
+                        {profitPercentage >= 0 ? (
                           <TrendingUp sx={{ color: theme.palette.success.main }} />
                         ) : (
                           <TrendingDown sx={{ color: theme.palette.error.main }} />
                         )}
-                          <Typography variant="body2" sx={{
-                                color: profitPercentage >= 0
-                              ? theme.palette.success.main
-                              : theme.palette.error.main,
-                            fontWeight: 'bold',
-                          }}>
-                              {formatCurrency(profit)} ({profitPercentage.toFixed(2)}%)
+                        <Typography variant="body2" sx={{
+                          color: profitPercentage >= 0
+                            ? theme.palette.success.main
+                            : theme.palette.error.main,
+                          fontWeight: 'bold',
+                        }}>
+                          {formatCurrency(profit)} ({profitPercentage.toFixed(2)}%)
                         </Typography>
                       </Box>
                     </TableCell>
@@ -221,7 +221,7 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                               color: theme.palette.primary.main,
                               '&:hover': {
                                 transform: 'scale(1.1)',
-                                    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                                backgroundColor: 'rgba(25, 118, 210, 0.04)',
                               },
                             }}
                           >
@@ -231,12 +231,12 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                         <Tooltip title="Delete Stock" TransitionComponent={Zoom}>
                           <IconButton
                             onClick={() => onDelete(stock.id)}
-                            size="small"
+                            size="small" 
                             sx={{
                               color: theme.palette.error.main,
                               '&:hover': {
                                 transform: 'scale(1.1)',
-                                    backgroundColor: 'rgba(211, 47, 47, 0.04)',
+                                backgroundColor: 'rgba(211, 47, 47, 0.04)',
                               },
                             }}
                           >

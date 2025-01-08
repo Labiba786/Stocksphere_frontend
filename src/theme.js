@@ -1,7 +1,17 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+const getTheme = (mode) => createTheme({
+  typography: {
+    fontFamily: "'Ubuntu', sans-serif",
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 600 },
+    h4: { fontWeight: 600 },
+    h5: { fontWeight: 600 },
+    h6: { fontWeight: 500 },
+  },
   palette: {
+    mode,
     primary: {
       main: "#2196F3",
       light: "#64B5F6",
@@ -14,45 +24,41 @@ const theme = createTheme({
       dark: "#F50057",
       contrastText: "#fff",
     },
-  },
-  shape: {
-    borderRadius: 8,
+    background: {
+      default: mode === 'dark' ? '#121212' : '#f5f7fa',
+      paper: mode === 'dark' ? '#1e1e1e' : '#ffffff',
+    },
   },
   components: {
-    MuiTextField: {
-      defaultProps: {
-        variant: "outlined",
-      },
+    MuiCssBaseline: {
       styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            "&:hover fieldset": {
-              borderColor: "#2196F3",
-            },
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          padding: "8px 24px",
-        },
-        contained: {
-          boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+        body: {
+          background: mode === 'dark' 
+            ? 'linear-gradient(135deg, #1e1e1e 0%, #121212 100%)'
+            : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          minHeight: '100vh',
+          transition: 'all 0.3s ease',
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9))",
+          backgroundImage: 'none',
+          backgroundColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.9)',
+          transition: 'all 0.3s ease',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backdropFilter: 'blur(10px)',
+          transition: 'all 0.3s ease',
         },
       },
     },
   },
 });
 
-export default theme;
+export default getTheme;

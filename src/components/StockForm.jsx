@@ -122,7 +122,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
 
         <Collapse in={isExpanded}>
           <Fade in={isExpanded}>
-            <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
                   name="name"
@@ -271,7 +271,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
                   {initialValues ? 'Update Stock' : 'Add Stock'}
                 </Button>
               </Box>
-            </form>
+    </form>
           </Fade>
         </Collapse>
       </Paper>

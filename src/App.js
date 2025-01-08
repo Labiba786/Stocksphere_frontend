@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  Container,
   CssBaseline,
   ThemeProvider,
   createTheme,
@@ -19,6 +18,7 @@ import Dashboard from "./components/Dashboard";
 import StockForm from "./components/StockForm";
 import StockList from "./components/StockList";
 import { stockApi } from "./services/service";
+import { motion, AnimatePresence } from "framer-motion";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -184,138 +184,210 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box
-          sx={{
-            flexGrow: 1,
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
+          sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
         >
-          <AppBar position="static">
-            <Toolbar>
-              <ShowChart
-                sx={{
-                  mr: 2,
-                  fontSize: "2rem",
-                  background: "linear-gradient(45deg, #2196F3, #21CBF3)",
-                  borderRadius: "50%",
-                  p: 0.5,
-                  boxShadow: "0 2px 10px rgba(33, 150, 243, 0.3)",
-                }}
-              />
-              <Typography
-                variant="h5"
-                component="div"
-                sx={{
-                  flexGrow: 1,
-                  fontWeight: 700,
-                  background: "linear-gradient(45deg, #2196F3, #21CBF3)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
-                  letterSpacing: "0.5px",
-                }}
-              >
-                Stocksphere
-              </Typography>
-              <IconButton
-                sx={{
-                  ml: 1,
-                  bgcolor: darkMode
-                    ? "rgba(255, 255, 255, 0.1)"
-                    : "rgba(0, 0, 0, 0.1)",
-                  "&:hover": {
-                    bgcolor: darkMode
-                      ? "rgba(255, 255, 255, 0.2)"
-                      : "rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-                onClick={() => setDarkMode(!darkMode)}
-                color="inherit"
-              >
-                {darkMode ? "☀️" : "🌙"}
-              </IconButton>
-            </Toolbar>
+          <AppBar
+            position="sticky"
+            elevation={0}
+            sx={{
+              background: darkMode
+                ? "rgba(18, 18, 18, 0.8)"
+                : "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(20px)",
+              borderBottom: 1,
+              borderColor: "divider",
+            }}
+          >
+            <Box sx={{ px: "18px" }}>
+              <Toolbar disableGutters>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      background: "linear-gradient(45deg, #2196F3, #21CBF3)",
+                      p: 1,
+                      borderRadius: "12px",
+                      boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+                    }}
+                  >
+                    <ShowChart sx={{ fontSize: 32, color: "white" }} />
+                  </Box>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      ml: 2,
+                      fontWeight: 700,
+                      background: "linear-gradient(45deg, #2196F3, #21CBF3)",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      color: "transparent",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Stocksphere
+                  </Typography>
+                </motion.div>
+
+                <Box sx={{ flexGrow: 1 }} />
+
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <IconButton
+                    onClick={() => setDarkMode(!darkMode)}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      background: darkMode
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "rgba(0, 0, 0, 0.05)",
+                      borderRadius: "12px",
+                      "&:hover": {
+                        background: darkMode
+                          ? "rgba(255, 255, 255, 0.2)"
+                          : "rgba(0, 0, 0, 0.1)",
+                      },
+                    }}
+                  >
+                    {darkMode ? "☀️" : "🌙"}
+                  </IconButton>
+                </motion.div>
+              </Toolbar>
+            </Box>
           </AppBar>
 
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
-            {isLoading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="50vh"
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <>
-                <ErrorBoundary>
-                  <Dashboard
-                    totalValue={metrics.totalValue}
-                    totalStocks={metrics.totalStocks}
-                    bestPerformer={metrics.bestPerformer}
-                    worstPerformer={metrics.worstPerformer}
-                  />
-                </ErrorBoundary>
-                <ErrorBoundary>
-                  <StockForm
-                    onSubmit={editingStock ? handleEditStock : handleAddStock}
-                    initialValues={editingStock}
-                  />
-                </ErrorBoundary>
-                <ErrorBoundary>
-                  <StockList
-                    stocks={stocks}
-                    onEdit={setEditingStock}
-                    onDelete={handleDeleteStock}
-                  />
-                </ErrorBoundary>
-              </>
-            )}
-          </Container>
+          <Box
+            sx={{
+              mt: 4,
+              mb: 4,
+              flexGrow: 1,
+              position: "relative",
+              px: "18px",
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "50vh",
+                  }}
+                >
+                  <CircularProgress />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <ErrorBoundary>
+                    <Dashboard
+                      totalValue={metrics.totalValue}
+                      totalStocks={metrics.totalStocks}
+                      bestPerformer={metrics.bestPerformer}
+                      worstPerformer={metrics.worstPerformer}
+                    />
+                  </ErrorBoundary>
+                  <ErrorBoundary>
+                    <StockForm
+                      onSubmit={editingStock ? handleEditStock : handleAddStock}
+                      initialValues={editingStock}
+                    />
+                  </ErrorBoundary>
+                  <ErrorBoundary>
+                    <StockList
+                      stocks={stocks}
+                      onEdit={setEditingStock}
+                      onDelete={handleDeleteStock}
+                    />
+                  </ErrorBoundary>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
 
-          {/* Footer */}
           <Box
             component="footer"
             sx={{
               py: "5px",
-              px: 2,
+              px: "18px",
               mt: "auto",
-              backgroundColor:
-                theme.palette.mode === "dark"
-                  ? "rgba(0, 0, 0, 0.87)"
-                  : "rgba(25, 118, 210, 0.08)",
+              background: darkMode
+                ? "rgba(18, 18, 18, 0.8)"
+                : "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(20px)",
               borderTop: 1,
               borderColor: "divider",
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 0.5,
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Proudly developed by <b>Labiba</b> with
-              <Favorite
+              <Typography
+                variant="body2"
+                align="center"
                 sx={{
-                  fontSize: 16,
-                  color: "#ff4081",
-                  animation: "pulse 1.5s ease infinite",
-                  "@keyframes pulse": {
-                    "0%": { transform: "scale(1)" },
-                    "50%": { transform: "scale(1.2)" },
-                    "100%": { transform: "scale(1)" },
-                  },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.5,
                 }}
-              />
-            </Typography>
+              >
+                Proudly developed by{" "}
+                <Box
+                  component="span"
+                  sx={{
+                    fontWeight: 600,
+                    background: "linear-gradient(45deg, #2196F3, #21CBF3)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  Labiba
+                </Box>{" "}
+                with
+                <motion.div
+                  animate={{
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                  }}
+                >
+                  <Favorite
+                    sx={{
+                      fontSize: 16,
+                      color: "#ff4081",
+                    }}
+                  />
+                </motion.div>
+              </Typography>
+            </motion.div>
           </Box>
         </Box>
 
@@ -323,11 +395,19 @@ const App = () => {
           open={snackbar.open}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
+          TransitionComponent={motion.div}
         >
           <Alert
             onClose={handleCloseSnackbar}
             severity={snackbar.severity}
-            sx={{ width: "100%" }}
+            sx={{
+              width: "100%",
+              backdropFilter: "blur(8px)",
+              background: darkMode
+                ? "rgba(18, 18, 18, 0.9)"
+                : "rgba(255, 255, 255, 0.9)",
+            }}
+            elevation={6}
           >
             {snackbar.message}
           </Alert>
