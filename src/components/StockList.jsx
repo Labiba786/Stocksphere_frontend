@@ -138,26 +138,26 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                 const profitPercentage = calculateProfitPercentage(initialValue, currentValue);
 
                 return (
-                  <TableRow
+                <TableRow 
                     key={stock.id}
-                    sx={{
+                  sx={{ 
                       transition: 'background-color 0.3s',
-                      '&:hover': {
+                    '&:hover': { 
                         backgroundColor: isDarkMode 
                           ? 'rgba(255, 255, 255, 0.05)' 
                           : 'rgba(0, 0, 0, 0.04)',
                       },
                     }}
                   >
-                    <TableCell>
+                  <TableCell>
                       <Typography variant="body2" sx={{ 
                         fontWeight: 500,
                         color: theme.palette.text.primary 
                       }}>
                         {stock.name || 'N/A'}
                       </Typography>
-                    </TableCell>
-                    <TableCell>
+                  </TableCell>
+                  <TableCell>
                       <Chip
                         label={stock.ticker || 'N/A'}
                         size="small"
@@ -188,7 +188,7 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                       }}>
                         {formatCurrency(currentValue)}
                       </Typography>
-                    </TableCell>
+                  </TableCell>
                     <TableCell align="right">
                       <Box sx={{
                         display: 'flex',
@@ -231,7 +231,7 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                         <Tooltip title="Delete Stock" TransitionComponent={Zoom}>
                           <IconButton
                             onClick={() => onDelete(stock.id)}
-                            size="small" 
+                                  size="small" 
                             sx={{
                               color: theme.palette.error.main,
                               '&:hover': {
@@ -244,8 +244,8 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                           </IconButton>
                         </Tooltip>
                       </Box>
-                    </TableCell>
-                  </TableRow>
+                  </TableCell>
+                </TableRow>
                 );
               })}
           </TableBody>
