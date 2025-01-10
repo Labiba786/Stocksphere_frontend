@@ -75,14 +75,14 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
+    <Router>
         <Routes>
           <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
           <Route path="/dashboard" element={<DashboardPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
           <Route path="/login" element={<LoginPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
           <Route path="/register" element={<RegisterPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
         </Routes>
-      </Router>
+    </Router>
     </ThemeProvider>
   );
 };

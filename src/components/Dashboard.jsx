@@ -267,7 +267,7 @@ const Dashboard = ({ totalValue, totalStocks, bestPerformer, worstPerformer }) =
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+          </Grid>
         <Grid item xs={12} md={4}>
           <Card
             elevation={0}
@@ -287,7 +287,7 @@ const Dashboard = ({ totalValue, totalStocks, bestPerformer, worstPerformer }) =
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Sector Distribution
-              </Typography>
+                </Typography>
               <Box sx={{ height: 300 }}>
                 <Pie data={pieChartData} options={{
                   responsive: true,

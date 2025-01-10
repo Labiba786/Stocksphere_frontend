@@ -96,16 +96,16 @@ const AnimatedChart = () => {
     <Box
       sx={{
         position: 'relative',
-        height: 400,
+        height: { xs: 250, sm: 300, md: 400 },
         width: '100%',
         background: theme.palette.mode === 'dark' 
           ? 'rgba(255, 255, 255, 0.05)' 
           : 'rgba(255, 255, 255, 0.9)',
-        borderRadius: 4,
+        borderRadius: { xs: 2, md: 4 },
         overflow: 'hidden',
         backdropFilter: 'blur(20px)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-        p: 3,
+        p: { xs: 2, md: 3 },
       }}
     >
       <Line data={data} options={options} />
@@ -113,7 +113,7 @@ const AnimatedChart = () => {
   );
 };
 
-const TestimonialCard = ({ name, role, comment, rating, delay }) => (
+const TestimonialCard = ({ name, role, comment, delay }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -121,22 +121,44 @@ const TestimonialCard = ({ name, role, comment, rating, delay }) => (
   >
     <Box
       sx={{
-        p: 4,
+        p: { xs: 2.5, md: 4 },
         height: '100%',
         background: (theme) => theme.palette.mode === 'dark'
           ? 'rgba(255, 255, 255, 0.05)'
           : 'rgba(255, 255, 255, 0.9)',
         borderRadius: 2,
         backdropFilter: 'blur(20px)',
+        transition: 'transform 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+        },
       }}
     >
-      <Typography variant="body1" sx={{ mb: 2, fontStyle: 'italic' }}>
+      <Typography 
+        variant="body1" 
+        sx={{ 
+          mb: 2, 
+          fontStyle: 'italic',
+          fontSize: { xs: '0.875rem', md: '1rem' },
+          lineHeight: 1.6
+        }}
+      >
         "{comment}"
       </Typography>
-      <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+      <Typography 
+        variant="subtitle1" 
+        sx={{ 
+          fontWeight: 'bold',
+          fontSize: { xs: '1rem', md: '1.1rem' }
+        }}
+      >
         {name}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography 
+        variant="body2" 
+        color="text.secondary"
+        sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}
+      >
         {role}
       </Typography>
     </Box>
@@ -151,7 +173,7 @@ const FeatureCard = ({ icon: Icon, title, description, delay }) => (
   >
     <Box
       sx={{
-        p: 3,
+        p: { xs: 2.5, md: 3 },
         height: '100%',
         background: (theme) => theme.palette.mode === 'dark' 
           ? 'rgba(255, 255, 255, 0.05)' 
@@ -165,11 +187,30 @@ const FeatureCard = ({ icon: Icon, title, description, delay }) => (
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <Icon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-        <Typography variant="h6" gutterBottom>
+        <Icon sx={{ 
+          fontSize: { xs: 36, md: 48 }, 
+          color: 'primary.main', 
+          mb: { xs: 1.5, md: 2 } 
+        }} />
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ 
+            fontSize: { xs: '1.1rem', md: '1.25rem' },
+            fontWeight: 600,
+            mb: 1
+          }}
+        >
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography 
+          variant="body2" 
+          color="text.secondary"
+          sx={{ 
+            fontSize: { xs: '0.875rem', md: '1rem' },
+            lineHeight: 1.6
+          }}
+        >
           {description}
         </Typography>
       </Box>
@@ -185,20 +226,39 @@ const StatCard = ({ icon: Icon, value, label }) => (
   >
     <Box
       sx={{
-        p: 3,
+        p: { xs: 2, md: 3 },
         textAlign: 'center',
         background: (theme) => theme.palette.mode === 'dark'
           ? 'rgba(255, 255, 255, 0.05)'
           : 'rgba(255, 255, 255, 0.9)',
         borderRadius: 2,
         backdropFilter: 'blur(10px)',
+        transition: 'transform 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+        },
       }}
     >
-      <Icon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
+      <Icon sx={{ 
+        fontSize: { xs: 32, md: 40 }, 
+        color: 'primary.main', 
+        mb: { xs: 1, md: 1.5 } 
+      }} />
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          mb: 0.5, 
+          fontWeight: 'bold',
+          fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
+        }}
+      >
         {value}
       </Typography>
-      <Typography variant="body1" color="text.secondary">
+      <Typography 
+        variant="body1" 
+        color="text.secondary"
+        sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}
+      >
         {label}
       </Typography>
     </Box>
@@ -271,33 +331,43 @@ const HomePage = ({ darkMode, setDarkMode }) => {
       flexDirection: 'column',
     }}>
       <Navigation darkMode={darkMode} setDarkMode={setDarkMode} />
+      
       {/* Hero Section */}
       <Box
         sx={{
           position: 'relative',
-          minHeight: '100vh',
+          minHeight: { xs: 'auto', md: '100vh' },
           display: 'flex',
           alignItems: 'center',
           background: theme.palette.mode === 'dark'
             ? 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)'
             : 'linear-gradient(135deg, #bbdefb 0%, #90caf9 100%)',
-          pt: '64px',
+          pt: { xs: '100px', sm: '120px', md: '64px' },
+          pb: { xs: 6, sm: 8, md: '64px' },
         }}
       >
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+        <Container 
+          maxWidth="lg" 
+          sx={{ 
+            position: 'relative', 
+            zIndex: 2,
+            px: { xs: 2, sm: 3, md: 3 }
+          }}
+        >
           <Grid 
             container 
-            spacing={4} 
+            spacing={{ xs: 4, md: 8 }} 
             alignItems="center"
-            sx={{ position: 'relative' }}
+            direction={{ xs: 'column-reverse', md: 'row' }}
           >
+            {/* Text Content */}
             <Grid 
               item 
               xs={12} 
               md={6}
               sx={{ 
-                position: 'relative',
-                zIndex: 3
+                textAlign: { xs: 'center', md: 'left' },
+                mt: { xs: 2, md: 0 }
               }}
             >
               <motion.div
@@ -310,18 +380,22 @@ const HomePage = ({ darkMode, setDarkMode }) => {
                   sx={{
                     fontWeight: 800,
                     mb: 2,
+                    fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
                     background: 'linear-gradient(45deg, #2196F3, #21CBF3)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
-                    position: 'relative',
                   }}
                 >
                   Stocksphere
                 </Typography>
                 <Typography
                   variant="h4"
-                  sx={{ mb: 4, color: theme.palette.text.primary }}
+                  sx={{ 
+                    mb: 4, 
+                    color: theme.palette.text.primary,
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
+                  }}
                 >
                   Your Smart Portfolio Tracker
                 </Typography>
@@ -330,46 +404,54 @@ const HomePage = ({ darkMode, setDarkMode }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  <Button
-                    variant="contained"
-                    size="large"
-                    onClick={() => navigate('/register')}
-                    sx={{
-                      mr: 2,
-                      background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                      boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                      transition: 'transform 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={() => navigate('/login')}
-                    sx={{
-                      borderColor: 'primary.main',
-                      '&:hover': {
+                  <Box sx={{ 
+                    display: 'flex', 
+                    gap: 2,
+                    justifyContent: { xs: 'center', md: 'flex-start' }
+                  }}>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={() => navigate('/register')}
+                      sx={{
+                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                        },
+                      }}
+                    >
+                      Get Started
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      onClick={() => navigate('/login')}
+                      sx={{
                         borderColor: 'primary.main',
-                        background: 'rgba(33, 150, 243, 0.1)',
-                      },
-                    }}
-                  >
-                    Login
-                  </Button>
+                        '&:hover': {
+                          borderColor: 'primary.main',
+                          background: 'rgba(33, 150, 243, 0.1)',
+                        },
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </Box>
                 </motion.div>
               </motion.div>
             </Grid>
+
+            {/* Chart */}
             <Grid 
               item 
               xs={12} 
               md={6}
               sx={{ 
-                position: 'relative',
-                zIndex: 2
+                width: '100%',
+                maxWidth: { xs: '100%', sm: '80%', md: '100%' },
+                mx: 'auto'
               }}
             >
               <motion.div
@@ -382,48 +464,16 @@ const HomePage = ({ darkMode, setDarkMode }) => {
             </Grid>
           </Grid>
         </Container>
-
-        {/* Background animation elements */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            overflow: 'hidden',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        >
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                y: ['0vh', '100vh'],
-                x: Math.random() * 100 + 'vw',
-              }}
-              transition={{
-                duration: Math.random() * 10 + 10,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-              style={{
-                position: 'absolute',
-                width: '2px',
-                height: '20px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '50%',
-              }}
-            />
-          ))}
-        </Box>
       </Box>
 
       {/* Stats Section */}
-      <Box sx={{ py: 8, background: 'rgba(0,0,0,0.02)' }}>
+      <Box sx={{ 
+        py: { xs: 6, sm: 8, md: 10 }, 
+        px: { xs: 2, sm: 3, md: 3 },
+        background: 'rgba(0,0,0,0.02)' 
+      }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, md: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
                 icon={People}
@@ -461,52 +511,56 @@ const HomePage = ({ darkMode, setDarkMode }) => {
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
         <Typography
           variant="h3"
           align="center"
-          sx={{ mb: 6, fontWeight: 700 }}
+          sx={{ 
+            mb: { xs: 4, md: 6 }, 
+            fontWeight: 700,
+            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+          }}
         >
           Powerful Features
         </Typography>
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 2, md: 4 }}>
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-            <FeatureCard
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-                delay={0.2 * index}
-            />
-          </Grid>
+              <FeatureCard {...feature} delay={0.2 * index} />
+            </Grid>
           ))}
-          </Grid>
+        </Grid>
       </Container>
 
       {/* Testimonials Section */}
-      <Box sx={{ py: 8, background: 'rgba(0,0,0,0.02)' }}>
+      <Box sx={{ py: { xs: 4, md: 8 }, background: 'rgba(0,0,0,0.02)' }}>
         <Container maxWidth="lg">
           <Typography
             variant="h3"
             align="center"
-            sx={{ mb: 6, fontWeight: 700 }}
+            sx={{ 
+              mb: { xs: 4, md: 6 }, 
+              fontWeight: 700,
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+            }}
           >
             What Our Users Say
           </Typography>
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, md: 4 }}>
             {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
+              <Grid item xs={12} sm={6} md={4} key={index}>
                 <TestimonialCard {...testimonial} delay={0.2 * index} />
-          </Grid>
+              </Grid>
             ))}
-        </Grid>
-      </Container>
+          </Grid>
+        </Container>
       </Box>
 
       {/* CTA Section */}
       <Box
         sx={{
-          py: 8,
+          py: { xs: 6, md: 8 },
+          px: 2,
           background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
           color: 'white',
         }}
@@ -519,10 +573,25 @@ const HomePage = ({ darkMode, setDarkMode }) => {
               mx: 'auto',
             }}
           >
-            <Typography variant="h3" sx={{ mb: 3, fontWeight: 700 }}>
+            <Typography 
+              variant="h3" 
+              sx={{ 
+                mb: 3, 
+                fontWeight: 700,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+              }}
+            >
               Ready to Start Tracking?
             </Typography>
-            <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                mb: 4, 
+                opacity: 0.9,
+                fontSize: { xs: '1rem', sm: '1.25rem' },
+                px: { xs: 2, sm: 0 }
+              }}
+            >
               Join thousands of investors who trust Stocksphere for their portfolio management
             </Typography>
             <Button
@@ -532,6 +601,8 @@ const HomePage = ({ darkMode, setDarkMode }) => {
               sx={{
                 bgcolor: 'white',
                 color: 'primary.main',
+                px: { xs: 4, sm: 6 },
+                py: { xs: 1.5, sm: 2 },
                 '&:hover': {
                   bgcolor: 'rgba(255,255,255,0.9)',
                 },
