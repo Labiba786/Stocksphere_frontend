@@ -5,6 +5,8 @@ import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -75,14 +77,23 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-    <Router>
-        <Routes>
-          <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
-          <Route path="/dashboard" element={<DashboardPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
-          <Route path="/login" element={<LoginPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
-          <Route path="/register" element={<RegisterPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
-        </Routes>
-    </Router>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage darkMode={darkMode} setDarkMode={setDarkMode} />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/login" element={<LoginPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
+            <Route path="/register" element={<RegisterPage darkMode={darkMode} setDarkMode={setDarkMode} />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

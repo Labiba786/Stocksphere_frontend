@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -8,27 +8,46 @@ import {
   InputAdornment,
   Link,
   useTheme,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import {
-  Email,
   Lock,
   Visibility,
   VisibilityOff,
   LoginOutlined,
   ArrowBack,
+  Person,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import axios from '../../utils/axios';
 
 const Login = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const handleChange = (field) => (event) => {
     event.preventDefault();
@@ -41,10 +60,8 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    if (!formData.username) {
+      newErrors.username = 'Username is required';
     }
     if (!formData.password) {
       newErrors.password = 'Password is required';
@@ -53,11 +70,40 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (validateForm()) {
-      // Handle login logic here
-      console.log('Login form submitted:', formData);
+    
+    try {
+      setIsLoading(true);
+      setApiError('');
+
+      if (!validateForm()) {
+        return;
+      }
+
+      const response = await axios.post('https://stocksphere-backend-329r.onrender.com/api/user/login', {
+          username: formData.username,
+          password: formData.password
+      });
+
+      if (response.status === 200) {
+        login(response.data);
+        setSuccessMessage('Login successful! Redirecting...');
+
+        const from = location.state?.from?.pathname || '/dashboard';
+        setTimeout(() => {
+          navigate(from, { replace: true });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response?.status === 409) {
+        setApiError('Invalid username or password. Please try again.');
+      } else {
+        setApiError(error.response?.data || 'Login failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -236,17 +282,16 @@ const Login = () => {
               >
                 <TextField
                   fullWidth
-                  label="Email"
+                  label="Username"
                   variant="outlined"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange('email')}
-                  error={Boolean(errors.email)}
-                  helperText={errors.email}
+                  value={formData.username}
+                  onChange={handleChange('username')}
+                  error={Boolean(errors.username)}
+                  helperText={errors.username}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Email />
+                        <Person />
                       </InputAdornment>
                     ),
                   }}
@@ -317,7 +362,8 @@ const Login = () => {
                   variant="contained"
                   size="large"
                   type="submit"
-                  startIcon={<LoginOutlined />}
+                  disabled={isLoading}
+                  startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <LoginOutlined />}
                   sx={{
                     background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                     boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
@@ -330,7 +376,7 @@ const Login = () => {
                     },
                   }}
                 >
-                  Sign In
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
 
                 <Box sx={{ mt: 3, textAlign: 'center' }}>
@@ -358,6 +404,69 @@ const Login = () => {
           </Box>
         </motion.div>
       </Box>
+
+      {/* Success Message Snackbar */}
+      <Snackbar
+        open={!!successMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10000
+        }}
+      >
+        <Alert 
+          severity="success" 
+          elevation={6} 
+          variant="filled"
+          sx={{ 
+            width: '100%', 
+            minWidth: '300px',
+            fontSize: '1rem',
+            backgroundColor: '#4caf50',
+            '& .MuiAlert-icon': {
+              fontSize: '2rem'
+            }
+          }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Message Snackbar */}
+      <Snackbar
+        open={!!apiError}
+        autoHideDuration={6000}
+        onClose={() => setApiError('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10000
+        }}
+      >
+        <Alert 
+          severity="error" 
+          elevation={6} 
+          variant="filled"
+          onClose={() => setApiError('')}
+          sx={{ 
+            width: '100%', 
+            minWidth: '300px',
+            fontSize: '1rem',
+            backgroundColor: '#f44336',
+            '& .MuiAlert-icon': {
+              fontSize: '2rem'
+            }
+          }}
+        >
+          {apiError}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

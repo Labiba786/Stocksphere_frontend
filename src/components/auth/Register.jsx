@@ -14,6 +14,9 @@ import {
   Link,
   useTheme,
   LinearProgress,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Person,
@@ -22,10 +25,11 @@ import {
   VisibilityOff,
   Lock,
   ArrowForward,
-  ArrowBack,
+  ArrowBack
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const theme = useTheme();
@@ -36,11 +40,15 @@ const Register = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const steps = ['Personal Info', 'Security'];
 
@@ -85,6 +93,10 @@ const Register = () => {
         newErrors.email = !value ? 'Email is required' : 
           !/\S+@\S+\.\S+/.test(value) ? 'Email is invalid' : '';
         break;
+      case 'username':
+        newErrors.username = !value ? 'Username is required' : 
+          value.length < 3 ? 'Username must be at least 3 characters' : '';
+        break;
       case 'password':
         newErrors.password = !value ? 'Password is required' : 
           value.length < 8 ? 'Password must be at least 8 characters' : '';
@@ -106,16 +118,17 @@ const Register = () => {
     setErrors(newErrors);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 0) {
       validateField('fullName', formData.fullName);
       validateField('email', formData.email);
-      if (!formData.fullName || !formData.email || errors.fullName || errors.email) return;
-    }
-    if (activeStep === steps.length - 1) {
-      handleSubmit();
-    } else {
+      if (!formData.fullName || !formData.email || errors.fullName || errors.email) {
+        setApiError('Please fill all required fields correctly');
+        return;
+      }
       setActiveStep((prev) => prev + 1);
+    } else if (activeStep === steps.length - 1) {
+      await handleSubmit();
     }
   };
 
@@ -124,8 +137,58 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
-    // Add your registration logic here
-    console.log('Form submitted:', formData);
+    if (!formData.username || !formData.password || !formData.confirmPassword || !formData.agreeToTerms) {
+      setApiError('Please fill all required fields');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setApiError('');
+
+      await axios.post(
+        'https://stocksphere-backend-329r.onrender.com/api/user/add',
+        {
+          fullName: formData.fullName,
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
+        }
+      );
+
+      // First show the success message
+      setSuccessMessage('Registration successful! Redirecting to login...');
+      
+      // Clear form
+      setFormData({
+        fullName: '',
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+        agreeToTerms: false
+      });
+
+      // Wait for 3 seconds to ensure message is visible
+      setTimeout(() => {
+        // Then navigate
+        navigate('/login', {
+          state: { message: 'Registration successful! Please login with your credentials.' },
+          replace: true
+        });
+      }, 3000);
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      if (error.response?.status === 409) {
+        setApiError('User already exists. Please try a different email or username.');
+      } else {
+        setApiError(error.response?.data?.message || 'Registration failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
@@ -136,6 +199,7 @@ const Register = () => {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
+        position: 'relative',
         background: theme.palette.mode === 'dark'
           ? 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)'
           : 'linear-gradient(135deg, #bbdefb 0%, #90caf9 100%)',
@@ -259,6 +323,22 @@ const Register = () => {
                 >
                   <TextField
                     fullWidth
+                    label="Username"
+                    value={formData.username}
+                    onChange={handleChange('username')}
+                    error={!!errors.username}
+                    helperText={errors.username}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Person />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ mb: 3 }}
+                  />
+                  <TextField
+                    fullWidth
                     label="Password"
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
@@ -352,6 +432,15 @@ const Register = () => {
                       {errors.agreeToTerms}
                     </Typography>
                   )}
+                  {apiError && (
+                    <Typography 
+                      color="error" 
+                      variant="body2" 
+                      sx={{ mt: 2, textAlign: 'center' }}
+                    >
+                      {apiError}
+                    </Typography>
+                  )}
               </motion.div>
               )}
             </Box>
@@ -368,16 +457,23 @@ const Register = () => {
                 variant="contained"
                 onClick={handleNext}
                 endIcon={activeStep === steps.length - 1 ? null : <ArrowForward />}
+                disabled={isLoading}
                 sx={{
                   background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                   boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                  transition: 'transform 0.2s',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    transform: 'scale(1.02)',
+                    background: 'linear-gradient(45deg, #1976D2 30%, #2196F3 90%)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 10px 2px rgba(33, 203, 243, .4)',
                   },
                 }}
               >
-                {activeStep === steps.length - 1 ? 'Sign Up' : 'Next'}
+                {isLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  activeStep === steps.length - 1 ? 'Sign Up' : 'Next'
+                )}
               </Button>
             </Box>
 
@@ -402,6 +498,69 @@ const Register = () => {
           </Box>
         </Box>
       </motion.div>
+
+      {/* Success Message Snackbar */}
+      <Snackbar
+        open={!!successMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10000
+        }}
+      >
+        <Alert 
+          severity="success" 
+          elevation={6} 
+          variant="filled"
+          sx={{ 
+            width: '100%', 
+            minWidth: '300px',
+            fontSize: '1rem',
+            backgroundColor: '#4caf50', // Bright green
+            '& .MuiAlert-icon': {
+              fontSize: '2rem'
+            }
+          }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Message Snackbar */}
+      <Snackbar
+        open={!!apiError}
+        autoHideDuration={6000}
+        onClose={() => setApiError('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10000
+        }}
+      >
+        <Alert 
+          severity="error" 
+          elevation={6} 
+          variant="filled"
+          onClose={() => setApiError('')}
+          sx={{ 
+            width: '100%', 
+            minWidth: '300px',
+            fontSize: '1rem',
+            backgroundColor: '#f44336', // Bright red
+            '& .MuiAlert-icon': {
+              fontSize: '2rem'
+            }
+          }}
+        >
+          {apiError}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
