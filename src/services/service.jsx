@@ -1,98 +1,98 @@
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 const API_BASE_URL = 'https://stocksphere-backend-329r.onrender.com/api/stocks';
 
-async function handleResponse(response) {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'API request failed');
-  }
-  if (response.status === 204 || response.headers.get('content-length') === '0') {
-    return null;
-  }
-  return response.json();
+// Helper function to get the token from cookies
+function getAuthToken() {
+  return Cookies.get('token'); // Replace 'authToken' with the actual cookie name for the token
 }
+
+// Create an Axios instance with default configurations
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add an interceptor to include the Authorization header in every request
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const stockApi = {
   getAllStocks: async () => {
-    const response = await fetch(API_BASE_URL);
-    return handleResponse(response);
+    const response = await apiClient.get();
+    return response.data;
   },
 
   addStock: async (stock) => {
-    const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(stock),
-    });
-    return handleResponse(response);
+    const response = await apiClient.post('', stock);
+    return response.data;
   },
 
   updateStock: async (id, stock) => {
-    const response = await fetch(`${API_BASE_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(stock),
-    });
-    return handleResponse(response);
+    const response = await apiClient.put(`/${id}`, stock);
+    return response.data;
   },
 
   deleteStock: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/${id}`, {
-      method: 'DELETE',
-    });
-    await handleResponse(response);
+    await apiClient.delete(`/${id}`);
     return true;
   },
 
   getPortfolioMetrics: async () => {
     try {
       const stocks = await stockApi.getAllStocks();
-      
       if (!stocks || stocks.length === 0) {
         return {
           totalValue: 0,
           totalStocks: 0,
           bestPerformer: 'N/A',
-          worstPerformer: 'N/A'
+          worstPerformer: 'N/A',
         };
       }
 
-      const metrics = stocks.reduce((acc, stock) => {
-        // Calculate total value
-        const stockValue = stock.quantity * stock.buyPrice;
-      acc.totalValue += stockValue;
+      const metrics = stocks.reduce(
+        (acc, stock) => {
+          const stockValue = stock.quantity * stock.buyPrice;
+          acc.totalValue += stockValue;
 
-      // Calculate performance percentage
-        const performancePercent = stock.currentPrice 
-          ? ((stock.currentPrice - stock.buyPrice) / stock.buyPrice) * 100
-          : 0;
-      
-      // Update best and worst performers
-      if (!acc.bestPerformer || performancePercent > acc.bestPerformerValue) {
-        acc.bestPerformer = `${stock.ticker} (${performancePercent.toFixed(2)}%)`;
-        acc.bestPerformerValue = performancePercent;
-      }
-      if (!acc.worstPerformer || performancePercent < acc.worstPerformerValue) {
-        acc.worstPerformer = `${stock.ticker} (${performancePercent.toFixed(2)}%)`;
-        acc.worstPerformerValue = performancePercent;
-      }
+          const performancePercent = stock.currentPrice
+            ? ((stock.currentPrice - stock.buyPrice) / stock.buyPrice) * 100
+            : 0;
 
-      return acc;
-    }, {
-      totalValue: 0,
-        totalStocks: stocks.length,
-      bestPerformer: null,
-      worstPerformer: null,
-      bestPerformerValue: null,
-      worstPerformerValue: null,
-    });
+          if (!acc.bestPerformer || performancePercent > acc.bestPerformerValue) {
+            acc.bestPerformer = `${stock.ticker} (${performancePercent.toFixed(2)}%)`;
+            acc.bestPerformerValue = performancePercent;
+          }
+          if (!acc.worstPerformer || performancePercent < acc.worstPerformerValue) {
+            acc.worstPerformer = `${stock.ticker} (${performancePercent.toFixed(2)}%)`;
+            acc.worstPerformerValue = performancePercent;
+          }
 
-      // Remove temporary calculation values
-    delete metrics.bestPerformerValue;
-    delete metrics.worstPerformerValue;
+          return acc;
+        },
+        {
+          totalValue: 0,
+          totalStocks: stocks.length,
+          bestPerformer: null,
+          worstPerformer: null,
+          bestPerformerValue: null,
+          worstPerformerValue: null,
+        }
+      );
+
+      delete metrics.bestPerformerValue;
+      delete metrics.worstPerformerValue;
 
       return metrics;
     } catch (error) {
@@ -101,10 +101,9 @@ export const stockApi = {
     }
   },
 
-  // Optional: If you have an endpoint for metrics
+  // Optional: If there's an API endpoint for metrics
   getMetricsFromAPI: async () => {
-    const response = await fetch(`${API_BASE_URL}/metrics`);
-    return handleResponse(response);
-  }
+    const response = await apiClient.get('/metrics');
+    return response.data;
+  },
 };
-

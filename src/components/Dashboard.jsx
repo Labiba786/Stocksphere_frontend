@@ -194,7 +194,7 @@ const Dashboard = ({ totalValue, totalStocks, bestPerformer, worstPerformer }) =
   const formattedWorstPerformer = worstPerformer || 'N/A';
 
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: 4 , mt: 10}}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
         Portfolio Overview
         </Typography>
