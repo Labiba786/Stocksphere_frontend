@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Check if user data exists in localStorage
     const savedUser = localStorage.getItem('user');
+    
     return savedUser ? JSON.parse(savedUser) : null;
   });
 

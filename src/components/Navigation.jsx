@@ -60,6 +60,7 @@ const Navigation = ({ darkMode, setDarkMode }) => {
 
   const handleLogout = () => {
     logout();
+    navigate("/login")
     setIsLoggedIn(false);
   };
 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import {
   Paper,
   Table,
@@ -30,12 +31,54 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPrices, setCurrentPrices] = useState({});
   const isDarkMode = theme.palette.mode === 'dark';
+  const USD_TO_INR_RATE = 83.50;
+  const API_KEY = process.env.REACT_APP_FINNHUB_API_KEY;
 
   // Reset page when stocks change
-  React.useEffect(() => {
+  useEffect(() => {
     setPage(0);
   }, [stocks.length]);
+
+  // Fetch current prices for all stocks
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const prices = {};
+      for (const stock of stocks) {
+        try {
+          const response = await axios.get(
+            `https://finnhub.io/api/v1/quote?symbol=${stock.ticker}&token=${API_KEY}`
+          );
+          prices[stock.ticker] = response.data.c * USD_TO_INR_RATE; // `c` is the current price from Finnhub API
+        } catch (error) {
+          console.error(`Error fetching price for ${stock.ticker}:`, error);
+          prices[stock.ticker] = null; // Fallback in case of an error
+        }
+      }
+      setCurrentPrices(prices);
+    };
+
+    if (stocks.length > 0) {
+      fetchPrices();
+    }
+  }, [stocks, API_KEY]);
+
+  const formatCurrency = (value) => `₹${(Number(value) || 0).toFixed(2)}`;
+
+  const calculateProfitPercentage = (initialValue, currentValue) => {
+    if (!initialValue || initialValue === 0) return 0;
+    return ((currentValue - initialValue) / initialValue) * 100;
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   if (!stocks || stocks.length === 0) {
     return (
@@ -60,24 +103,6 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
     );
   }
 
-  const formatCurrency = (value) => {
-    return `₹${(Number(value) || 0).toFixed(2)}`;
-  };
-
-  const calculateProfitPercentage = (initialValue, currentValue) => {
-    if (!initialValue || initialValue === 0) return 0;
-    return ((currentValue - initialValue) / initialValue) * 100;
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   return (
     <Paper
       elevation={3}
@@ -86,11 +111,11 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
         overflow: 'hidden',
         background: isDarkMode ? 'rgba(41, 41, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(10px)',
-          transition: 'all 0.3s ease',
+        transition: 'all 0.3s ease',
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-        }
+        },
       }}
     >
       <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
@@ -104,60 +129,77 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
             color: 'transparent',
           }}
         >
-            Stock Holdings
+          Stock Holdings
         </Typography>
       </Box>
 
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow sx={{ 
-              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
-            }}>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>Stock Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>Ticker</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">Quantity</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">Buy Price</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">Current Price</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">Total Value</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">Profit/Loss</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="center">Actions</TableCell>
+            <TableRow
+              sx={{
+                backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              }}
+            >
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
+                Stock Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
+                Ticker
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">
+                Quantity
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">
+                Buy Price
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">
+                Current Price
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">
+                Total Value
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="right">
+                Profit/Loss
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: theme.palette.text.primary }} align="center">
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-           {stocks
+            {stocks
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((stock) => {
-                const currentPrice = stock.currentPrice || stock.buyPrice || 0;
+                const currentPrice = currentPrices[stock.ticker] || 0;
                 const buyPrice = stock.buyPrice || 0;
                 const quantity = stock.quantity || 0;
-                
                 const currentValue = quantity * currentPrice;
                 const initialValue = quantity * buyPrice;
                 const profit = currentValue - initialValue;
                 const profitPercentage = calculateProfitPercentage(initialValue, currentValue);
 
                 return (
-                <TableRow 
+                  <TableRow
                     key={stock.id}
-                  sx={{ 
+                    sx={{
                       transition: 'background-color 0.3s',
-                    '&:hover': { 
-                        backgroundColor: isDarkMode 
-                          ? 'rgba(255, 255, 255, 0.05)' 
+                      '&:hover': {
+                        backgroundColor: isDarkMode
+                          ? 'rgba(255, 255, 255, 0.05)'
                           : 'rgba(0, 0, 0, 0.04)',
                       },
                     }}
                   >
-                  <TableCell>
-                      <Typography variant="body2" sx={{ 
-                        fontWeight: 500,
-                        color: theme.palette.text.primary 
-                      }}>
+                    <TableCell>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 500, color: theme.palette.text.primary }}
+                      >
                         {stock.name || 'N/A'}
                       </Typography>
-                  </TableCell>
-                  <TableCell>
+                    </TableCell>
+                    <TableCell>
                       <Chip
                         label={stock.ticker || 'N/A'}
                         size="small"
@@ -182,31 +224,37 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2" sx={{ 
-                        fontWeight: 500,
-                        color: theme.palette.text.primary 
-                      }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 500, color: theme.palette.text.primary }}
+                      >
                         {formatCurrency(currentValue)}
                       </Typography>
-                  </TableCell>
+                    </TableCell>
                     <TableCell align="right">
-                      <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        gap: 1,
-                      }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-end',
+                          gap: 1,
+                        }}
+                      >
                         {profitPercentage >= 0 ? (
                           <TrendingUp sx={{ color: theme.palette.success.main }} />
                         ) : (
                           <TrendingDown sx={{ color: theme.palette.error.main }} />
                         )}
-                        <Typography variant="body2" sx={{
-                          color: profitPercentage >= 0
-                            ? theme.palette.success.main
-                            : theme.palette.error.main,
-                          fontWeight: 'bold',
-                        }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color:
+                              profitPercentage >= 0
+                                ? theme.palette.success.main
+                                : theme.palette.error.main,
+                            fontWeight: 'bold',
+                          }}
+                        >
                           {formatCurrency(profit)} ({profitPercentage.toFixed(2)}%)
                         </Typography>
                       </Box>
@@ -231,7 +279,7 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                         <Tooltip title="Delete Stock" TransitionComponent={Zoom}>
                           <IconButton
                             onClick={() => onDelete(stock.id)}
-                                  size="small" 
+                            size="small"
                             sx={{
                               color: theme.palette.error.main,
                               '&:hover': {
@@ -244,13 +292,14 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
                           </IconButton>
                         </Tooltip>
                       </Box>
-                  </TableCell>
-                </TableRow>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
           </TableBody>
         </Table>
       </TableContainer>
+
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
@@ -259,36 +308,15 @@ const StockList = ({ stocks = [], onEdit, onDelete }) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            borderTop: 1,
-            borderColor: 'divider',
-          color: theme.palette.text.primary,
-          }}
       />
     </Paper>
   );
 };
 
-// Add PropTypes
 StockList.propTypes = {
-  stocks: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      ticker: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired,
-      buyPrice: PropTypes.number.isRequired,
-      currentPrice: PropTypes.number,
-    })
-  ),
+  stocks: PropTypes.array.isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
 
-// Add default props
-StockList.defaultProps = {
-  stocks: [],
-};
-
 export default StockList;
-

@@ -63,17 +63,20 @@ const DashboardPage = ({ darkMode, setDarkMode }) => {
 
   const handleEditStock = async (updatedStock) => {
     try {
-      const editedStock = await stockApi.updateStock(
-        updatedStock.id,
-        updatedStock
-      );
+      // Create a sanitized copy of updatedStock without the `user` and `id` properties
+      const { user, id, ...sanitizedStock } = updatedStock;
+  
+      const editedStock = await stockApi.updateStock(id, sanitizedStock);
+  
       setStocks(
         stocks.map((stock) =>
           stock.id === editedStock.id ? editedStock : stock
         )
       );
+  
       setEditingStock(null);
       await fetchStocksAndMetrics();
+  
       setSnackbar({
         open: true,
         message: "Stock updated successfully",
@@ -81,6 +84,7 @@ const DashboardPage = ({ darkMode, setDarkMode }) => {
       });
     } catch (error) {
       console.error("Error updating stock:", error);
+  
       setSnackbar({
         open: true,
         message: `Failed to update stock: ${
@@ -90,6 +94,7 @@ const DashboardPage = ({ darkMode, setDarkMode }) => {
       });
     }
   };
+  
 
   const handleDeleteStock = async (id) => {
     try {
@@ -128,7 +133,7 @@ const DashboardPage = ({ darkMode, setDarkMode }) => {
         <Navigation darkMode={darkMode} setDarkMode={setDarkMode} />
         <Dashboard totalValue={metrics.totalValue} totalStocks={stocks.length} bestPerformer={metrics.bestPerformer} worstPerformer={metrics.worstPerformer} />
         <StockForm onSubmit={editingStock ? handleEditStock : handleAddStock} initialValues={editingStock}/>
-        <StockList stocks={stocks} onEdit={handleEditStock} onDelete={handleDeleteStock} />
+        <StockList stocks={stocks} onEdit={setEditingStock} onDelete={handleDeleteStock} />
       </Box>
       <Snackbar
           open={snackbar.open}
