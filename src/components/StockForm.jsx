@@ -42,7 +42,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
       setStock(initialValues);
       setIsExpanded(true);
     } else {
-      setStock({ name: '', ticker: '', quantity: '', buyPrice: '' });
+      setStock({ name: '', ticker: '', quantity: '1', buyPrice: '' });
       setIsExpanded(false);
     }
   }, [initialValues]);
@@ -201,7 +201,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
                           <Numbers sx={{ color: theme.palette.text.secondary }} />
                         </InputAdornment>
                       ),
-                      inputProps: { min: "1" }
+                      inputProps: { min: "1" }, // Enforces minimum value at the browser level
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
@@ -220,6 +220,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
                       },
                     }}
                   />
+
                   <TextField
                     name="buyPrice"
                     label="Buy Price (₹)"
