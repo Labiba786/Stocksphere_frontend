@@ -11,16 +11,17 @@ import {
   Fade,
   Tooltip,
   InputAdornment,
-  useTheme
+  useTheme,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import { 
   Add as AddIcon,
   Edit as EditIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
-  CurrencyRupee,
-  Label,
-  Numbers,
   Business
 } from '@mui/icons-material';
 
@@ -32,6 +33,10 @@ const StockForm = ({ onSubmit, initialValues }) => {
   );
   const [isExpanded, setIsExpanded] = useState(!!initialValues);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const tickerOptions = [
+    "AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "FB", "NFLX", "NVDA", "BABA", "JPM", "INTC", "AMD", "IBM", "ORCL", "CSCO", "SAP", "V", "MA", "PYPL", "CRM", "ADBE", "PFE", "MRK", "UNH", "JNJ", "KO", "PEP", "DIS", "MCD", "NKE"
+  ];
 
   useEffect(() => {
     setIsLoaded(true);
@@ -51,7 +56,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
     const { name, value } = e.target;
     setStock((prevStock) => ({
       ...prevStock,
-      [name]: name === 'quantity' || name === 'buyPrice' ? value : value,
+      [name]: value,
     }));
   };
 
@@ -122,7 +127,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
 
         <Collapse in={isExpanded}>
           <Fade in={isExpanded}>
-    <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
                   name="name"
@@ -155,38 +160,47 @@ const StockForm = ({ onSubmit, initialValues }) => {
                     },
                   }}
                 />
-                <TextField
-                  name="ticker"
-                  label="Ticker Symbol"
-                  value={stock.ticker}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
+                <FormControl fullWidth>
+                  {/* <InputLabel id="ticker-label" sx={{ color: theme.palette.text.secondary }}>
+                    Ticker Symbol
+                  </InputLabel> */}
+                  <Select
+                    labelId="ticker-label"
+                    name="ticker"
+                    value={stock.ticker}
+                    onChange={handleChange}
+                    required
+                    startAdornment={
                       <InputAdornment position="start">
-                        <Label sx={{ color: theme.palette.text.secondary }} />
+                        <Business sx={{ color: theme.palette.text.secondary }} />
                       </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+                    }
+                    displayEmpty
+                    inputProps={{ placeholder: 'Select a ticker symbol' }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: theme.palette.primary.main,
+                        },
                       },
-                      '&:hover fieldset': {
-                        borderColor: theme.palette.primary.main,
+                      '& .MuiInputLabel-root': {
+                        color: theme.palette.text.secondary,
                       },
-                    },
-                    '& .MuiInputLabel-root': {
-                      color: theme.palette.text.secondary,
-                    },
-                    '& .MuiInputBase-input': {
-                      color: theme.palette.text.primary,
-                      textTransform: 'uppercase',
-                    },
-                  }}
-                />
+                      '& .MuiInputBase-input': {
+                        color: theme.palette.text.primary,
+                      },
+                    }}
+                  >
+                    {tickerOptions.map((ticker) => (
+                      <MenuItem key={ticker} value={ticker}>
+                        {ticker}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                   <TextField
                     name="quantity"
@@ -196,12 +210,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
                     onChange={handleChange}
                     required
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Numbers sx={{ color: theme.palette.text.secondary }} />
-                        </InputAdornment>
-                      ),
-                      inputProps: { min: "1" }, // Enforces minimum value at the browser level
+                      inputProps: { min: "1" },
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
@@ -229,11 +238,6 @@ const StockForm = ({ onSubmit, initialValues }) => {
                     onChange={handleChange}
                     required
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <CurrencyRupee sx={{ color: theme.palette.text.secondary }} />
-                        </InputAdornment>
-                      ),
                       inputProps: { min: "0", step: "0.01" }
                     }}
                     sx={{
@@ -272,7 +276,7 @@ const StockForm = ({ onSubmit, initialValues }) => {
                   {initialValues ? 'Update Stock' : 'Add Stock'}
                 </Button>
               </Box>
-    </form>
+            </form>
           </Fade>
         </Collapse>
       </Paper>
@@ -281,4 +285,3 @@ const StockForm = ({ onSubmit, initialValues }) => {
 };
 
 export default StockForm;
-
