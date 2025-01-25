@@ -1,70 +1,129 @@
-# Getting Started with Create React App
+# Stocksphere
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Introduction
 
-## Available Scripts
+Stocksphere is a comprehensive stock management system that helps businesses manage their inventory efficiently. Built with Java and Spring Boot on the backend and a responsive UI designed with modern frameworks, Stocksphere ensures optimal user experience and performance.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Table of Contents :
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Introduction
+- Key Features
+- Technology Stack
+- Usage
+- Steps to run the project
+- Assumptions & Limitations
+- Links
+- License
+- Contact
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Key Features
 
-### `npm test`
+### 1. Code Quality
+- Clean, modular, and readable codebase.
+- Adheres to Java and Spring Boot design principles, ensuring maintainability and scalability.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. UI/UX Design
+- Responsive and intuitive interface for seamless user interaction.
+- Styled using modern frameworks such as TailwindCSS, Bootstrap, or Material-UI for consistency and aesthetics.
 
-### `npm run build`
+### 3. Technical Highlights
+- **Frontend:** Demonstrates a strong understanding of frontend technologies with dynamic and interactive components.
+- **Backend:** Designed with efficient database schema and robust API endpoints.
+- **Error Handling:** Implements proper exception handling mechanisms to ensure smooth operation.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
+## Technology Stack 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Backend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Java 17: Core programming language.
+ 
+- Spring Boot: Framework for building RESTful APIs and backend logic.
 
-### `npm run eject`
+- Maven: Dependency management and build automation.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Frontend
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React.js: Framework for building the user interface.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- TailwindCSS / Bootstrap / Material-UI: For responsive and modern styling.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Database
 
-## Learn More
+- MySQL / PostgreSQL: For efficient data storage and management.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Other Tools
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Swagger: For API documentation.
 
-### Code Splitting
+- Postman: API testing and debugging.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Usage
 
-### Analyzing the Bundle Size
+StockSphere is designed to simplify stock management for small to medium-sized businesses. The application provides the following capabilities:
+- Inventory Tracking: Monitor stock levels, restock alerts, and detailed inventory reports.
+- Product Management: Add, update, and delete product information easily.
+- User Management: Role-based access control for administrators and employees.
+- Reports and Analytics: Generate insights into stock movement, sales trends, and business performance.
+- Responsive Design: Access the application on desktops, tablets, and mobile devices seamlessly.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Steps to Run the Project Locally
 
-### Making a Progressive Web App
+### 1. Clone the Repository
+```bash
+git clone <repository_url>
+cd stocksphere
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 2. Set Up Frontend
+- Ensure you have Node.js and npm/yarn installed.
+- Navigate to the frontend folder:
+```bash
+cd frontend
+```
+- Install dependencies:
+```bash
+npm install
+```
+- Start the development server:
+```bash
+npm start
+```
 
-### Advanced Configuration
+### 3. Access the Application
+- The frontend application will run on `http://localhost:3000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Assumptions and Limitations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- The application is designed for small to medium-sized businesses.
+- Multi-language support is not implemented in the current version.
+- Stocksphere assumes a stable internet connection for optimal performance.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Links
+
+- **Deployed Application:** [Live Demo](https://stocksphere-frontend.vercel.app/)
+- **API Documentation:** [Swagger Documentation](#)
+
+---
+
+## License
+
+Stocksphere is licensed under the [MIT](https://choosealicense.com/licenses/mit/)
+License - see the LICENSE file for details.
+
+---
+
+## Contact
+
+For queries or feedback, contact:
+
+Email - labibanajmee09@gmail.com
+
+GitHub: https://github.com/Labiba786
+
