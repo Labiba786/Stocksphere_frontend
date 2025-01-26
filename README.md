@@ -18,6 +18,8 @@ Stocksphere is a comprehensive stock management system that helps businesses man
 - License
 - Contact
 
+---
+
 ## Key Features
 
 ### 1. Code Quality
@@ -34,7 +36,18 @@ Stocksphere is a comprehensive stock management system that helps businesses man
 - **Error Handling:** Implements proper exception handling mechanisms to ensure smooth operation.
 
 ---
+
 ## Technology Stack 
+
+### Frontend
+
+- React.js: Framework for building the user interface.
+
+- TailwindCSS / Material-UI: For responsive and modern styling.
+
+### Database
+
+- MySQL : For efficient data storage and management.
 
 ### Backend
 
@@ -43,22 +56,14 @@ Stocksphere is a comprehensive stock management system that helps businesses man
 - Spring Boot: Framework for building RESTful APIs and backend logic.
 
 - Maven: Dependency management and build automation.
-
-### Frontend
-
-- React.js: Framework for building the user interface.
-
-- TailwindCSS / Bootstrap / Material-UI: For responsive and modern styling.
-
-### Database
-
-- MySQL / PostgreSQL: For efficient data storage and management.
-
+  
 ### Other Tools
 
 - Swagger: For API documentation.
 
 - Postman: API testing and debugging.
+
+---
 
 ## Usage
 
@@ -68,6 +73,8 @@ StockSphere is designed to simplify stock management for small to medium-sized b
 - User Management: Role-based access control for administrators and employees.
 - Reports and Analytics: Generate insights into stock movement, sales trends, and business performance.
 - Responsive Design: Access the application on desktops, tablets, and mobile devices seamlessly.
+
+---
 
 ## Steps to Run the Project Locally
 
